@@ -31,7 +31,7 @@
 #define RAD_TO_DEG(x) ( x * 57.29578 )
  
  
-Serial pc(USBTX, USBRX);
+RawSerial pc(USBTX, USBRX);
 MPU6050 mpu(I2C_SDA0, I2C_SCL0);     // sda, scl pin
  
 const int FIFO_BUFFER_SIZE = 128;
@@ -58,7 +58,7 @@ struct MPU6050_DmpData {
 #define CONN_INTERVAL 25  /**< connection interval 20ms; in multiples of 0.125ms. (durationInMillis * 1000) / UNIT_0_625_MS; */
 #define CONN_SUP_TIMEOUT  8000 /**< Connection supervisory timeout (6 seconds); in multiples of 0.125ms. */
 #define SLAVE_LATENCY     0
-#define TICKER_INTERVAL   2.0f
+//#define TICKER_INTERVAL   2.0f
 
 BLE   ble;
 
@@ -90,7 +90,7 @@ uint8_t quoternionPayload[sizeof(float)*4] = {0,};
 GattAttribute       quoternionAttr (BLE_UUID_DESCRIPTOR_CHAR_USER_DESC, (uint8_t *)QUOTERNION_DESC, sizeof(QUOTERNION_DESC), sizeof(QUOTERNION_DESC));
 GattAttribute       *quoternionAttrs[] = { &quoternionAttr, };
 GattCharacteristic  quoternionChar (MPU6050_dmp_Characteristic_uuid,
-                                        quoternionPayload, (sizeof(float) * 10), (sizeof(float) * 10),
+                                        quoternionPayload, (sizeof(float) * 4), (sizeof(float) * 4),
                                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ, quoternionAttrs, 1);
 
 GattCharacteristic *ControllerChars[] = { &quoternionChar, };
@@ -116,8 +116,8 @@ bool Init() {
     mpu.setXAccelOffset(offset.ax);
     mpu.setYAccelOffset(offset.ay);
     mpu.setZAccelOffset(offset.az);
-    mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
-    mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+    mpu.setFullScaleGyroRange(MPU6050_GYRO_FS);
+    mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS);
     mpu.setXGyroOffsetUser(offset.gx);
     mpu.setYGyroOffsetUser(offset.gy);
     mpu.setZGyroOffsetUser(offset.gz);
@@ -130,6 +130,16 @@ bool Init() {
     return true;
 }
  
+void bleUpdatedValue(MPU6050_DmpData dmpData)
+{
+    memcpy(quoternionPayload+sizeof(float)*0, &dmpData.q.w, sizeof(float));
+    memcpy(quoternionPayload+sizeof(float)*1, &dmpData.q.x, sizeof(float));
+    memcpy(quoternionPayload+sizeof(float)*2, &dmpData.q.y, sizeof(float));
+    memcpy(quoternionPayload+sizeof(float)*3, &dmpData.q.y, sizeof(float));
+        
+    ble.updateCharacteristicValue(quoternionChar.getValueAttribute().getHandle(), quoternionPayload, sizeof(quoternionPayload));    //Mod
+    mpu.resetFIFO();
+}
  
 void dmpDataUpdate() {
     // Check that this interrupt has enabled.
@@ -154,13 +164,7 @@ void dmpDataUpdate() {
         mpu.dmpGetQuaternion(&dmpData.q, fifoBuffer);
         if ( snprintf( snprintf_buffer, snprintf_buffer_size, "Quaternion : w=%f, x=%f, y=%f, z=%f\n", dmpData.q.w, dmpData.q.x, dmpData.q.y, dmpData.q.z ) < 0 ) return;
         pc.puts(snprintf_buffer);
-        
-        memcpy(quoternionPayload+sizeof(float)*0, &dmpData.q.w, sizeof(float));
-        memcpy(quoternionPayload+sizeof(float)*1, &dmpData.q.x, sizeof(float));
-        memcpy(quoternionPayload+sizeof(float)*2, &dmpData.q.y, sizeof(float));
-        memcpy(quoternionPayload+sizeof(float)*3, &dmpData.q.y, sizeof(float));
-        
-        ble.updateCharacteristicValue(quoternionChar.getValueAttribute().getHandle(), quoternionPayload, sizeof(quoternionPayload));    //Mod
+        bleUpdatedValue(dmpData);
     #endif
         
     #ifdef OUTPUT_EULER
