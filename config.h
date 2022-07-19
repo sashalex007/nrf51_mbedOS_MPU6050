@@ -5,7 +5,7 @@
  
 // Sample rate = 1kHz / (1 + this valye)
 // For example, 4 is 200Hz.
-#define IMU_SAMPLE_RATE_DIVIDER 4
+#define IMU_SAMPLE_RATE_DIVIDER 0
  
 // measuring range of gyroscope (±n deg/s)
 // But other value doesn't yet support.
@@ -15,4 +15,4 @@
 // But other value doesn't yet support.
 #define MPU6050_ACCEL_FS MPU6050_ACCEL_FS_16//MPU6050_ACCEL_FS_2
  
-#define PC_BAUDRATE 115200
+
