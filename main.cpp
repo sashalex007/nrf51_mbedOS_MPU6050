@@ -60,7 +60,6 @@ char *FORMATVOLTAGE;
 
 BLE   ble;
 UARTService *uart;
-bool right;
 
 float aRes = 2.0/32768.0;
 float gRes = 250.0/32768.0;
@@ -102,40 +101,14 @@ bool Init()
         return false;
     }
 
-    //right_test
-    mpu.setXAccelOffset(1478);
-    mpu.setYAccelOffset(1024);
-    mpu.setZAccelOffset(1765);
-    mpu.setXGyroOffsetUser(144);
-    mpu.setYGyroOffsetUser(30);
-    mpu.setZGyroOffsetUser(50);
+    mpu.setXAccelOffset(-2937);
+    mpu.setYAccelOffset(-1807);
+    mpu.setZAccelOffset(1621);
+    mpu.setXGyroOffsetUser(140);
+    mpu.setYGyroOffsetUser(26);
+    mpu.setZGyroOffsetUser(8);
 
-    //left_test
-//    mpu.setXAccelOffset(205);
-//    mpu.setYAccelOffset(1403);
-//    mpu.setZAccelOffset(1691);
-//    mpu.setXGyroOffsetUser(39);
-//    mpu.setYGyroOffsetUser(-9);
-//    mpu.setZGyroOffsetUser(73);
-
-    //L1
-//    mpu.setXAccelOffset(168);
-//    mpu.setYAccelOffset(1452);
-//    mpu.setZAccelOffset(1791);
-//    mpu.setXGyroOffsetUser(34);
-//    mpu.setYGyroOffsetUser(-2);
-//    mpu.setZGyroOffsetUser(67);
-
-    //R1
-//    mpu.setXAccelOffset(1478);
-//    mpu.setYAccelOffset(1024);
-//    mpu.setZAccelOffset(1765);
-//    mpu.setXGyroOffsetUser(144);
-//    mpu.setYGyroOffsetUser(30);
-//    mpu.setZGyroOffsetUser(50);
-    
     //device type
-    right = true; 
 
     wait(1);
     rLed = 1;
@@ -148,7 +121,6 @@ void disconnectionCallback(const Gap::DisconnectionCallbackParams_t *params)
     mpuCount = 0;
     ble.startAdvertising();
 }
-
 
 void connectionCallback(const Gap::ConnectionCallbackParams_t *params)
 {
@@ -431,15 +403,9 @@ void powerManage()
 
 void charInit()
 {
-    if (right) {
-        strcpy(DEVICENAME, "right");
-        FORMATDATA = "r_%6.2f_%6.2f\n";
-        FORMATVOLTAGE = "rv_%6.2f\n";
-    } else {
-        strcpy(DEVICENAME, "left");
-        FORMATDATA = "l_%6.2f_%6.2f\n";
-        FORMATVOLTAGE = "lv_%6.2f\n";
-    }
+    strcpy(DEVICENAME, "NRF51");
+        FORMATDATA = "%6.2f_%6.2f\n";
+        FORMATVOLTAGE = "v_%6.2f\n";
 
 }
 
