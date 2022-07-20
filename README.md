@@ -10,7 +10,7 @@ Prerequisites
 
 NOTE: I am not providing a prebuilt firmware file for this repo because every DMP will have different xyz offsets, and its easy enough to build your own from source.
 
-###Guide
+### Guide
 
 1. Flash calibration firmware and run calibration to get XYZ offsets https://github.com/sashalex007/nrf51_MPU6050_calibrate
 2. Import this project into your Keil Studio cloud (see guide 2 in the calibrate repo...do not use that URL)
