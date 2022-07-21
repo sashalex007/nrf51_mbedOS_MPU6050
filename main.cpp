@@ -404,8 +404,8 @@ void powerManage()
 void charInit()
 {
     strcpy(DEVICENAME, "NRF51");
-        FORMATDATA = "%6.2f_%6.2f\n";
-        FORMATVOLTAGE = "v_%6.2f\n";
+        FORMATDATA = "r_%6.2f_%6.2f\n";
+        FORMATVOLTAGE = "rv_%6.2f\n";
 
 }
 
