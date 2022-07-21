@@ -1,5 +1,7 @@
 # Firmware for NRF51 sensor tag
 
+![Screenshot](screenshot.png)
+
 This firmware makes it possible to use the cheap nrf51 sensor tag as a high performance accelerometer and gyroscope over bluetooth. This firmware will output device roll and total accleration magnitude. Customization is possible in main.cpp. The DMP functions built into the MPU6050 were causing innexplicable crashes so I simply wrote a custom madjwick filter using raw values from the gyro and accelerometer. This also allows for a 30ms polling rate instead of the 200ms limitation on the DMP; this makes the device suitable for high performance applications. Can be used over serial bluetooth monitor, but this firmware is optimized for use with my android application https://github.com/sashalex007/nrf51_android_app. 
 https://www.aliexpress.com/item/32859423925.html
 
